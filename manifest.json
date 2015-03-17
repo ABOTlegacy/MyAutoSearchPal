@@ -1,0 +1,19 @@
+{
+    "name": "My Autosearch Pal",
+    "version": "1.0",
+	"manifest_version": 2,
+    "description": "Extension that provides the ability to run a script geared towards testing your blog or website's search feature.",
+    "browser_action": {
+        "default_icon": "files/icon.png",
+	    "default_popup": "html/index.html"
+    },
+	"content_scripts": [{
+        "matches": ["http://*/*", "https://*/*"],
+        "js": [
+            "js/jquery/jquery-1.7.2.min.js",
+        	"js/extension/extension.action.js",
+			"css/styles.css"
+        ]
+    }],
+    "permissions": ["tabs","activeTab","webRequest","webRequestBlocking","<all_urls>"]
+}
