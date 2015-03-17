@@ -1,8 +1,8 @@
-$(document).ready(function() {
+var TargetTimeout = null;
+var TargetMobile = false;
+var TargetPreviousUrl = "";
 
-	var TargetTimeout = null;
-	var TargetMobile = false;
-	var TargetPreviousUrl = "";
+$(document).ready(function() {
 
 	chrome.webRequest.onBeforeSendHeaders.addListener(
 		function(info) {
@@ -13,7 +13,7 @@ $(document).ready(function() {
 					if ($("#chkMobile").attr("checked") == "checked" || TargetMobile){
 						header.value = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4';
 					} else {
-						//header.value = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4';
+						header.value = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4';
 					}
 				}
 			});
@@ -46,25 +46,22 @@ $(document).ready(function() {
 		return text;
 	}
 	
-	function search(hostname)
-	{
-		hostname = (new URL(hostname)).hostname.split("").reverse().join("");
+	function search(hostname) {
+		hostname = (new URL(hostname)).hostname.split("").reverse().join("|");
 		var searchString = "";
-		switch(hostname)
-		{
-			case "moc.gnib.www":
+		switch(hostname) {
+			case "m|oc|.|g|n|i|b|.|w|w|w":
 				searchString += 'document.getElementsByName("q")[0].value = "' + makeid() + '"; document.getElementById("sb_form").submit();';
 				break;
-			case "moc.skcubgaws.hcraes":
-			case "moc.skcubgaws.www":
+			case "m|oc|.|s|k|c|u|b|g|a|w|s|.|h|c|r|a|e|s":
+			case "m|o|c|.|s|k|c|u|b|g|a|w|s|.|w|w|w":
 				searchString += 'if(document.getElementById("sawInput") !== null) { document.getElementById("sawInput").value = "' + makeid() + '"; document.getElementById("searchAndWinContainer").submit(); }';
 				searchString += 'if(document.getElementById("field") !== null) { document.getElementById("field").value = "' + makeid() + '"; document.getElementById("searchFrm").submit(); }';
 				break;
-			case "moc.skcubgaws.oediv":
+			case "m|o|c|.|s|k|c|u|b|g|a|w|s|.|o|e|d|i|v":
 				searchString += "var script = document.createElement('script');script.type = 'text/javascript';";   
-				searchString += "script.innerHTML += \"var firstPause = true; sb_vd.play = eval(\\\"(\\\" + sb_vd.play.toString().substr(0, sb_vd.play.toString().length - 1) + \\\"if(firstPause) { firstPause = false; sb_vd.pause(); setTimeout(function(){ sb_vd.play(); }, 30000);}})\\\"); var mysavedtimer = 0; sb_vd.tick = eval(\\\"(\\\" + sb_vd.tick.toString().substr(0, sb_vd.tick.toString().length - 1) + \\\"if ($('.contCongrats').length > 0){alert('Please Enter Capcha For Reward.');}else{if(sb_vd.timer == mysavedtimer || true) { window.location=window.url.substr(0, window.url.search(sbtvVidId)) + (parseInt(sbtvVidId) + 1);} else { mysavedtimer = sb_vd.timer; }}})\\\");\";"
+				searchString += "script.innerHTML += \"sb_vd.play = eval(\\\"(\\\" + sb_vd.play.toString().substr(0, sb_vd.play.toString().length - 1) + \\\"setTimeout(function(){ if(sb_vd.lastMeterNumber == undefined) { sb_vd.pause(); setTimeout(function(){ sb_vd.play(); }, 10000); } }, 3000); })\\\"); sb_vd.tick = eval(\\\"(\\\" + sb_vd.tick.toString().substr(0, sb_vd.tick.toString().length - 1) + \\\"if (sb_vd.lastMeterNumber == 9){alert('Please Enter Capcha For Reward.');}else{window.location=window.url.substr(0, window.url.search(sbtvVidId)) + (parseInt(sbtvVidId) + 1);}})\\\");\";"
 				searchString += "document.getElementsByTagName('head')[0].appendChild(script);";
-				//searchString += "$(document).ready(function() { document.getElementsByTagName('head')[0].appendChild(script);});";
 				break;
 			default:
 				alert(hostname);
@@ -73,31 +70,25 @@ $(document).ready(function() {
 		return searchString;
 	}
 	
-	function script(tab)
-	{
-		var hostname = (new URL(tab.url)).hostname.split("").reverse().join("");
+	function script(tab) {
+		var hostname = (new URL(tab.url)).hostname.split("").reverse().join("|");
 		switch(hostname)
 		{
-			case "moc.gnib.www":
-			case "moc.skcubgaws.hcraes":
-			case "moc.skcubgaws.www":
+			case "m|o|c|.|g|n|i|b|.|w|w|w":
+			case "m|o|c|.|s|k|c|u|b|g|a|w|s|.|h|c|r|a|e|s":
+			case "m|o|c|.|s|k|c|u|b|g|a|w|s|.|w|w|w":
 				TargetMobile = false;
 				chrome.tabs.executeScript(tab.id,{
 					code: search(tab.url)
 				});
 				break;
-			case "moc.skcubgaws.oediv":
-				TargetMobile = true;
+			case "m|o|c|.|s|k|c|u|b|g|a|w|s|.|o|e|d|i|v":
 				if (tab.url != TargetPreviousUrl) {
 					chrome.tabs.executeScript(tab.id,{
 						code: search(tab.url)
 					});
 					TargetPreviousUrl = tab.url;
 				}
-				//chrome.tabs.onActiveChanged.addListener(function() {
-				//chrome.tabs.onUpdated.addListener(performSearch);
-				//clearTimeout(TargetTimeout);
-				//TargetTimeout = null;
 				break;
 			default:
 				alert(hostname);
@@ -109,9 +100,6 @@ $(document).ready(function() {
 	{
 		chrome.tabs.getSelected(null, function (tab) {
 			script(tab);
-			//chrome.tabs.executeScript(tab.id,{
-			//	code: search(tab.url)
-			//);
 		});
 	}
 	
