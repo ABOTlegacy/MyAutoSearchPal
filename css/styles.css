@@ -35,6 +35,10 @@ body {
 	width: 50%;
 	display: inline-block;
 }
+.label-right {
+	width: 50%;
+	display: inline-block;
+}
 p.p-checkbox {
 	display: inline-block;
 }
